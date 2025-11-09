@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>温馨提醒小助手 - 每日正能量</title>
+    <meta name="description" content="随机生成温馨提醒，给您每天的正能量">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .tip-card {
+            padding: 40px 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .controls {
+            margin: 30px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+        }
+        
+        .history {
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .history h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .history-item {
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+        }
+        
+        .counter {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .tip-card {
+                font-size: 18px;
+                padding: 30px 15px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌼 温馨提醒小助手 🌼</h1>
+            <p>点击按钮获取今日温馨提醒，让生活充满正能量</p>
+        </div>
+        
+        <div id="tipDisplay" class="tip-card">
+            准备接收温馨提醒...
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="generateTip()">✨ 获取提醒</button>
+            <button class="btn btn-secondary" onclick="generateMultipleTips()">🎯 连续提醒</button>
+            <button class="btn" onclick="clearHistory()">🗑️ 清空记录</button>
+        </div>
+
+        <div class="counter">
+            今日已接收提醒: <span id="counter">0</span> 次
+        </div>
+        
+        <div class="history">
+            <h3>📝 提醒记录</h3>
+            <div id="history"></div>
+        </div>
+        
+        <div class="footer">
+            <p>温馨提醒小助手 | 让每一天都充满正能量</p>
+        </div>
+    </div>
+
+    <script>
+        const tips = [
+            "多喝水哦~ 💧", "保持微笑呀 😊", "每天都要元气满满 🌟",
+            "记得吃水果 🍎", "保持好心情 🎵", "好好爱自己 ❤️", "开心就好 🎉",
+            "梦想成真 ✨", "期待下一次见面 👋", "金榜题名 🏆",
+            "顺顺利利 🍀", "早点休息 🌙", "愿所有烦恼都消失 🎈",
+            "别熬夜 ⏰", "今天过得开心嘛 😄", "天冷了，多穿衣服 🧥",
+            "记得按时吃饭 🍚", "你是最棒的 👍", "一切都会好起来的 🌈",
+            "保持耐心和勇气 💪", "今天也要加油哦 ⛽", "感恩当下 🙏"
+        ];
+
+        const colors = [
+            "#FFB6C1", "#87CEEB", "#90EE90", "#E6E6FA",
+            "#FFFFE0", "#DDA0DD", "#FF7F50", "#FFE4C4",
+            "#7FFFD4", "#FFE4E1", "#F0FFF0", "#FFF0F5",
+            "#E0FFFF", "#F5F5DC", "#F0E68C", "#D8BFD8"
+        ];
+
+        let counter = 0;
+
+        // 从本地存储加载历史记录
+        function loadHistory() {
+            const savedHistory = localStorage.getItem('warmTipsHistory');
+            const savedCounter = localStorage.getItem('warmTipsCounter');
+            
+            if (savedHistory) {
+                document.getElementById('history').innerHTML = savedHistory;
+            }
+            
+            if (savedCounter) {
+                counter = parseInt(savedCounter);
+                document.getElementById('counter').textContent = counter;
+            }
+        }
+
+        // 保存到本地存储
+        function saveHistory() {
+            localStorage.setItem('warmTipsHistory', document.getElementById('history').innerHTML);
+            localStorage.setItem('warmTipsCounter', counter.toString());
+        }
+
+        function generateTip() {
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            const tipDisplay = document.getElementById('tipDisplay');
+            tipDisplay.textContent = randomTip;
+            tipDisplay.style.background = randomColor;
+            tipDisplay.style.color = getContrastColor(randomColor);
+            
+            // 更新计数器
+            counter++;
+            document.getElementById('counter').textContent = counter;
+            
+            // 添加到历史记录
+            addToHistory(randomTip, randomColor);
+            
+            // 保存到本地存储
+            saveHistory();
+        }
+
+        function generateMultipleTips() {
+            let count = 0;
+            const maxCount = 5;
+            
+            const interval = setInterval(() => {
+                generateTip();
+                count++;
+                if (count >= maxCount) {
+                    clearInterval(interval);
+                }
+            }, 800);
+        }
+
+        function addToHistory(tip, color) {
+            const history = document.getElementById('history');
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = `${new Date().toLocaleTimeString()} - ${tip}`;
+            historyItem.style.borderLeftColor = color;
+            history.insertBefore(historyItem, history.firstChild);
+            
+            // 限制历史记录数量
+            if (history.children.length > 10) {
+                history.removeChild(history.lastChild);
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('确定要清空所有提醒记录吗？')) {
+                document.getElementById('history').innerHTML = '';
+                counter = 0;
+                document.getElementById('counter').textContent = '0';
+                localStorage.removeItem('warmTipsHistory');
+                localStorage.removeItem('warmTipsCounter');
+            }
+        }
+
+        // 计算对比色确保文字可读
+        function getContrastColor(hexcolor) {
+            const r = parseInt(hexcolor.substr(1, 2), 16);
+            const g = parseInt(hexcolor.substr(3, 2), 16);
+            const b = parseInt(hexcolor.substr(5, 2), 16);
+            const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            return (yiq >= 128) ? '#333333' : '#FFFFFF';
+        }
+
+        // 页面加载时初始化
+        window.onload = function() {
+            loadHistory();
+            generateTip(); // 初始显示一个提示
+        };
+    </script>
+</body>
+</html>
